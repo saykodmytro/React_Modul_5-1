@@ -1,6 +1,6 @@
 import css from './Section.module.css';
 
-const Section = ({ children, title }) => {
+const Section = ({ children, title = false }) => {
   return (
     <section className={css.section}>
       {title && <h2>{title}</h2>}

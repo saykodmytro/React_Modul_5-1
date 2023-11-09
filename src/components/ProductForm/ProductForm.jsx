@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+
 import css from './ProductForm.module.css';
 
 const ProductForm = ({ handleAddProduct }) => {
@@ -7,27 +8,30 @@ const ProductForm = ({ handleAddProduct }) => {
   const [hasDiscount, setHasDiscount] = useState(false);
   const [discount, setDiscount] = useState('');
 
-  const handleSubmit = evt => {
-    evt.preventDefault();
+  const handleSubmit = event => {
+    event.preventDefault();
 
     const productData = {
-      title: title,
+      title,
       price: Number.parseFloat(price),
       discount: hasDiscount ? Number.parseFloat(discount) : null,
     };
+
     handleAddProduct(productData);
+
     setTitle('');
     setPrice('');
     setHasDiscount(false);
     setDiscount('');
   };
 
-  const handleInputChange = evt => {
+  const handleInputChange = event => {
     const value =
-      evt.target.type === 'checkbox' ? evt.target.checked : evt.target.value;
-    console.log('value: ', value);
+      event.target.type === 'checkbox'
+        ? event.target.checked
+        : event.target.value;
 
-    const name = evt.target.name;
+    const name = event.target.name; // 'price'
 
     switch (name) {
       case 'title': {
@@ -46,19 +50,18 @@ const ProductForm = ({ handleAddProduct }) => {
         setDiscount(value);
         return;
       }
-
       default:
         return;
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className={css.form}>
+    <form onSubmit={handleSubmit} className={`${css.form} ${css.formLarge}`}>
       {title === 'Spagetti' && (
-        <h2>Congrats! You won a promocode - #R3E2A1🎉</h2>
+        <h2>Congrats! You won a promocode😒😭 - #R3E2A1🎉</h2>
       )}
       <label className={css.formLabel}>
-        <p className={css.labelText}>Title: </p>
+        <p className={css.labelText}>Title:</p>
         <input
           type="text"
           name="title"
@@ -67,7 +70,7 @@ const ProductForm = ({ handleAddProduct }) => {
         />
       </label>
       <label className={css.formLabel}>
-        <p className={css.labelText}>Price: </p>
+        <p className={css.labelText}>Price:</p>
         <input
           type="text"
           name="price"
@@ -82,11 +85,11 @@ const ProductForm = ({ handleAddProduct }) => {
           onChange={handleInputChange}
           checked={hasDiscount}
         />{' '}
-        <span>Has discount?</span>
+        Has discount?
       </label>
       {hasDiscount && (
         <label className={css.formLabel}>
-          <p className={css.labelText}>Discount: </p>
+          <p className={css.labelText}>Discount:</p>
           <input
             type="text"
             name="discount"
@@ -95,7 +98,7 @@ const ProductForm = ({ handleAddProduct }) => {
           />
         </label>
       )}
-      <button type="submit">Add Products</button>
+      <button type="submit">Add Product</button>
     </form>
   );
 };

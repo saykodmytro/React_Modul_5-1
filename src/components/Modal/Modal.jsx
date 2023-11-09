@@ -1,52 +1,77 @@
-import css from './Modal.module.css';
-import { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
+
+import { StyledModal } from './Styled';
 import { ModalContext } from 'context/ModalContext';
 
-//            ******************** useState **********************
+/*
+Методи життєвого циклу - це зарезервовані реактом методи(функції),
+ які запускаються в певний період життя компоненти самим Реактом.
 
-// useState - Виклик хука useState створює стан і метод, який змінюватиме його значення. У якості параметра хук приймає початковий стан, в нашому випадку число 1. У стані може зберігатися будь-який тип даних.
+ componentDidMount() {} - метод життєвого цикл,
+    що запускається один раз, після успішного монтування компонети в DOM.
 
-// Хук useState повертає масив із двох елементів: перший - поточне значення стану, другий - функцію для його зміни, яку можна використовувати де завгодно, наприклад, в обробнику подій. React буде зберігати цей стан між рендерами. Використовуючи деструктуризацію, можна задати будь-які імена змінних.
+    Використання:
+    - Вішаються глобальні слухачі подій (addEventListener)
+    - Встановлюються асинхронні таймери та лічильники (setTimeout, setInterval)
+    - Зчитуються дані з локального сховища та встановлюємо їх в стейт
+    - Надсилаються мережеві запити (HTTP request)
 
-//           ******************** useEffect **********************
+ componentWillUnmount() {} - метод життєвого цикл,
+    що запускається один раз, перед повним видаленням компонети з DOM.
 
-// useEffect - запускається кожний раз, коли компонент видалився і народився
+    Використання:
+    - Прибираються глобальні слухачі подій (removeEventListener)
+    - Прибирати асинхронні таймери та лічильники (clearTimeout, clearInterval)
+    - Відхиляти мережеві запити (cancel HTTP request)
 
-// useEffect(callback, deps) приймає два аргументи:
-
-// callback - функція, усередині якої виконується вся логіка ефекту. Наприклад, запити на сервер, завдання обробників подій на документ і т.п.
-// (deps) залежності - масив змінних, при зміні будь-якого з яких, буде запускатися ефект і виконуватися callback. Це може бути стан, пропси або будь-яке локальне значення всередині компонента.
-
-// Якщо не передати масив залежностей, ефект виконуватиметься на кожному рендері компонента. Саме завдяки масиву залежностей ми можемо імітувати методи життєвого циклу.
+ componentDidUpdate(prevProps, prevState) {} - метод життєвого цикл,
+    що запускається кожен раз, після того, як компонента оновилася(змінилися пропси, або стейт).
+   
+    Використання:
+    - Надсилаються мережеві запити (HTTP request)
+    - Оновлюють(синхронізуються) дані зі стейту з локальним сховищем
+*/
 
 const Modal = () => {
   const { modalData, closeModal } = useContext(ModalContext);
-
-  const inputRef = useRef();
   const [counter, setCounter] = useState(1);
+  const inputRef = useRef(null);
   const firstRenderRef = useRef(true);
-  console.log('firstRenderRef: ', firstRenderRef);
 
   useEffect(() => {
-    if (!inputRef.current) return;
-    inputRef.current.focus();
-
-    const handleKeyDown = evt => {
-      if (evt.code === 'Escape') {
+    const handleKeyDown = event => {
+      if (event.code === 'Escape') {
         closeModal();
       }
     };
+
     window.addEventListener('keydown', handleKeyDown);
     document.body.style.overflow = 'hidden';
-    //  ************  End Emulation componentDidMount(){} ************
-
-    //  ************    Emulation componentWillUnmount(){} ************
 
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
       document.body.style.overflow = 'auto';
     };
   }, [closeModal]);
+
+  const handleOverayClick = event => {
+    if (event.target === event.currentTarget) {
+      closeModal();
+    }
+  };
+
+  useEffect(() => {
+    if (!inputRef.current) return;
+
+    inputRef.current.focus();
+  }, []);
+
+  const handleButtonClick = () => {
+    console.log(inputRef.current);
+    // const inputWidth = getComputedStyle(inputRef.current).width
+    // console.log('inputWidth: ', inputWidth);
+    inputRef.current.focus();
+  };
 
   useEffect(() => {
     if (firstRenderRef.current === false) {
@@ -58,30 +83,17 @@ const Modal = () => {
     };
   }, [counter]);
 
-  const handleOverlayClick = evt => {
-    if (evt.target === evt.currentTarget) {
-      closeModal();
-    }
-  };
-
-  const handleButtonClick = () => {
-    console.log(inputRef.current);
-    // const inputWidth = getComputedStyle(inputRef.current).width;
-    // console.log('inputWidth: ', inputWidth);
-    inputRef.current.focus();
-  };
-
   return (
-    <div onClick={handleOverlayClick} className={css.modalContainer}>
-      <div className={css.modalWindow}>
-        <button onClick={closeModal} className={css.closeBtn}>
-          &times;
+    <StyledModal onClick={handleOverayClick}>
+      <div className="modal">
+        <button onClick={closeModal} className="closeBtn">
+          ❌
         </button>
         <h2>Product Details</h2>
         <div>
           <h3>Title: {modalData.title}</h3>
-          <p>Discount: {modalData.discount}$</p>
           <p>Price: {modalData.price}$</p>
+          <p>Discount: {modalData.discount}$</p>
         </div>
         <input ref={inputRef} type="text" />
         <button onClick={handleButtonClick}>Select input</button>
@@ -89,7 +101,7 @@ const Modal = () => {
           Product count: {counter}
         </button>
       </div>
-    </div>
+    </StyledModal>
   );
 };
 

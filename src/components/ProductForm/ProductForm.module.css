@@ -4,8 +4,8 @@
   align-items: flex-start;
   gap: 18px;
 }
-
-.formLabel {
+.formLarge {
+  border: 1px solid red;
 }
 
 .labelText {
