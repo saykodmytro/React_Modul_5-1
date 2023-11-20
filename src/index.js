@@ -8,7 +8,7 @@ import { ModalContextProvider } from 'context/ModalContext';
 import './index.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <ModalContextProvider>
+  <ModalContextProvider basename="/React_Modul_5-1">
     <BrowserRouter>
       <App />
     </BrowserRouter>
